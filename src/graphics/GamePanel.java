@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import game.Ball;
+import game.Opponent;
 import game.Player;
 
 public class GamePanel extends JPanel implements KeyListener, ActionListener {
@@ -24,7 +25,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 		
 		private Player player;
 		private Ball ball;
+		private Opponent opponent;
 		private int time = 0;
+		private int difficulty = 3;
+		private int pscore = 0;
+		private int oscore = 0;
 		private Timer timer;
 		private Random random = new Random();
 		private double i = 0;
@@ -35,8 +40,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 			
 			player = new Player();
 			ball = new Ball();
-			//ball.m = random.nextInt(10);
-			ball.m = 1;
+			opponent = new Opponent();
+			
+			
 			
 			
 			
@@ -58,6 +64,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 			
 			player.draw(g);
 			ball.draw(g);
+			opponent.draw(g);
 		}
 	
 		public void keyPressed(KeyEvent e) {
@@ -90,28 +97,86 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			time++;
-			player.update();
-			ball.update();
 			
 			
-			if(ball.collides(player))
+			if(pscore == 2 || oscore == 2) {
+				System.exit(0);
+			}
+			
+			if(ball.collidesp(player))
 			{
 				System.out.println("true");
-				//ball.dx = ball.dx*-1;
-				ball.dx = 0;
-				ball.dy = 0;
+				//i = ball.dx;
+				//ball.dx = ball.dy;
+				//ball.dy = i;
+				
+				ball.dx = ball.dx * -1;
+				
 				System.out.println(ball.dx);
+				System.out.println(ball.x);
+				
+			}
+			
+			if(ball.collideso(opponent))
+			{
+				//System.out.println("true");
+				//i = ball.dx;
+				//ball.dx = ball.dy;
+				//ball.dy = i;
+				
+				ball.dx = ball.dx * -1;
+				
+				//System.out.println(ball.dx);
+				//System.out.println(ball.x);
+			}
+			
+			if(ball.collidesw(S_HEIGHT)) {
+				ball.dy = ball.dy * -1;
+				//System.out.println("yeet");
+			}
+			
+			if(ball.collideseo()) {
+				ball.start();
+				pscore++;
+				System.out.println("player scored");
+			}
+			if(ball.collidesep()) {
+				ball.start();
+				oscore++;
+				System.out.println("opponent scored");
 			}
 				
 				
-			//else
-				//System.out.println("false");
-				
-				
-				
+		
+			if(random.nextInt(difficulty)==1){
+			if(opponent.y >= ball.y) {
+				opponent.movingDown = true;
+				opponent.movingUp = false;
+			}
+			if(opponent.y <= ball.y) {
+				opponent.movingDown = false;
+				opponent.movingUp = true;
+			}
+			}
+			
+			
+			
+			
+			
+			player.update();
+			ball.update();
+			opponent.update();
+			//System.out.println(ball.y);
+			
+			
+			
+			
+			
 			repaint();
 			
 		}
+		
+
 
 
 		@Override
